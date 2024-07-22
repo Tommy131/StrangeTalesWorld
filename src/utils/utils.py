@@ -10,7 +10,7 @@ Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
 Date         : 2024-07-21 02:08:40
 Author       : HanskiJay
 LastEditors  : HanskiJay
-LastEditTime : 2024-07-22 14:58:27
+LastEditTime : 2024-07-23 01:50:49
 E-Mail       : support@owoblog.com
 Telegram     : https://t.me/HanskiJay
 GitHub       : https://github.com/Tommy131
@@ -19,8 +19,13 @@ GitHub       : https://github.com/Tommy131
 
 import pygame
 
-# 找出最长元素
 def find_longest_element(input_list):
+    """
+    查找列表中最长的元素
+
+    :param input_list: 要检查的列表
+    :return: 列表中最长的元素如果列表为空, 则返回 None
+    """
     # 检查输入列表是否为空
     if not input_list:
         return None
@@ -40,10 +45,22 @@ def find_longest_element(input_list):
 
     return longest_element
 
-# 从文件加载图片
 def load_image(filename):
+    """
+    从文件加载图片
+
+    :param filename: 图片文件的路径
+    :return: 加载的图片对象
+    """
     return pygame.image.load(filename)
 
-# 调整图片大小
 def scale_image(image, width, height):
+    """
+    调整图片的大小
+
+    :param image: 要调整大小的图片对象
+    :param width: 新的宽度
+    :param height: 新的高度
+    :return: 调整大小后的图片对象
+    """
     return pygame.transform.scale(image, (width, height))
