@@ -10,7 +10,7 @@ Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
 Date         : 2024-07-20 14:30:27
 Author       : HanskiJay
 LastEditors  : HanskiJay
-LastEditTime : 2024-07-22 15:17:08
+LastEditTime : 2024-07-24 00:39:13
 E-Mail       : support@owoblog.com
 Telegram     : https://t.me/HanskiJay
 GitHub       : https://github.com/Tommy131
@@ -18,6 +18,7 @@ GitHub       : https://github.com/Tommy131
 # settings.py
 
 class Settings:
+    # ~ 常量定义
     # 屏幕尺寸
     SCREEN_WIDTH = 1920
     SCREEN_HEIGHT = 1080
@@ -26,8 +27,10 @@ class Settings:
     FPS = 60
 
     # 颜色
+    TRANSPARENT = (0, 0, 0, 0)
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
+    GREY = (169, 169, 169)
     RED = (255, 0, 0)
     GREEN = (0, 255, 0)
     BLUE = (0, 0, 255)
@@ -59,6 +62,14 @@ class Settings:
     # 字体
     FONT_CN = f'{FONT_PATH}SimHei.ttf'
 
+    # 物品栏
+    ITEM_SIZE = 50
+    DISPLAY_ITEM_NUM = 7
+    ITEM_PADDING = 5
+    DURABILITY_BAR_HEIGHT = 5
+    BG_COLOR = (30, 30, 30)
+
+    # ~ 变量定义
     # 调试模式
     debug_mode = False
 

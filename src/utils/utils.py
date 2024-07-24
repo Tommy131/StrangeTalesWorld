@@ -10,7 +10,7 @@ Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
 Date         : 2024-07-21 02:08:40
 Author       : HanskiJay
 LastEditors  : HanskiJay
-LastEditTime : 2024-07-23 01:50:49
+LastEditTime : 2024-07-23 16:47:19
 E-Mail       : support@owoblog.com
 Telegram     : https://t.me/HanskiJay
 GitHub       : https://github.com/Tommy131
@@ -18,6 +18,7 @@ GitHub       : https://github.com/Tommy131
 # utils.py
 
 import pygame
+import random
 
 def find_longest_element(input_list):
     """
@@ -64,3 +65,20 @@ def scale_image(image, width, height):
     :return: 调整大小后的图片对象
     """
     return pygame.transform.scale(image, (width, height))
+
+def generate_name():
+    """
+    生成随机名称
+    """
+    first_names = [
+        'Alice', 'Bob', 'Charlie', 'David', 'Emma', 'Frank', 'Grace', 'Henry', 'Ivy', 'Jack',
+        'Katherine', 'Liam', 'Mia', 'Noah', 'Olivia', 'Paul', 'Quincy', 'Rachel', 'Sam', 'Tina'
+    ]
+
+    last_names = [
+        'Anderson', 'Brown', 'Clark', 'Davis', 'Evans', 'Garcia', 'Harris', 'Jackson', 'Johnson', 'King',
+        'Lewis', 'Miller', 'Nelson', 'O\'Brien', 'Parker', 'Quinn', 'Robinson', 'Smith', 'Taylor', 'Wilson'
+    ]
+    first_name = random.choice(first_names)
+    last_name = random.choice(last_names)
+    return f"{first_name} {last_name}"

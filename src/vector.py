@@ -155,3 +155,11 @@ class Vector:
         """
         self.y = y
         return self
+
+    def get_pos(self):
+        """
+        返回向量元组
+
+        :return: Tuple
+        """
+        return (self.x, self.y)

@@ -10,15 +10,18 @@ Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
 Date         : 2024-07-21 02:08:40
 Author       : HanskiJay
 LastEditors  : HanskiJay
-LastEditTime : 2024-07-23 01:40:19
+LastEditTime : 2024-07-23 23:58:42
 E-Mail       : support@owoblog.com
 Telegram     : https://t.me/HanskiJay
 GitHub       : https://github.com/Tommy131
 '''
 # entity.py
 
+import json
 import pygame
 
+import game
+from inventory.inventory import Inventory
 from utils.settings import Settings
 from vector import Vector
 
@@ -31,10 +34,11 @@ class Entity:
     DAMAGE = 0
     COLOR = (0, 255, 0)
 
-    def __init__(self, name=NAME, size=SIZE, speed=SPEED, max_speed=MAX_SPEED, health=HEALTH, max_health=HEALTH, damage=DAMAGE, color=COLOR):
+    def __init__(self, screen, name=NAME, size=SIZE, speed=SPEED, max_speed=MAX_SPEED, health=HEALTH, max_health=HEALTH, damage=DAMAGE, color=COLOR):
         """
         初始化实体对象
 
+        :param screen: 游戏窗口, 用于绘制实体的信息
         :param name: 实体名称, 默认为 'Entity'
         :param size: 实体大小, 默认为 50
         :param speed: 实体速度, 默认为 5
@@ -44,6 +48,7 @@ class Entity:
         :param damage: 实体伤害值, 默认为 0
         :param color: 实体颜色, 默认为 (0, 255, 0)
         """
+        self.screen = screen
         self.name = name
         self.size = size
         self.speed = speed
@@ -53,6 +58,7 @@ class Entity:
         self.damage = damage
         self.color = color
         self.vector = Vector()
+        self.inventory = Inventory()
 
         # attack
         self.attack_flash_time = 0
@@ -60,6 +66,12 @@ class Entity:
 
         # 血条
         self.can_display_health_bar = False
+
+    def reset(self):
+        """
+        重置实体属性到默认值
+        """
+        self.__init__(name=self.name, size=self.size, speed=self.speed, max_speed=self.max_speed, health=self.health, max_health=self.max_health, damage=self.damage, color=self.color)
 
     def set_size(self, size):
         """
@@ -145,15 +157,13 @@ class Entity:
         if self.vector.y > Settings.SCREEN_HEIGHT - self.size:
             self.vector.y = Settings.SCREEN_HEIGHT - self.size
 
-    def draw_header_info(self, screen):
+    def draw_header_info(self):
         """
         绘制实体的头部信息, 包括名称和生命值条
-
-        :param screen: 游戏窗口, 用于绘制实体的信息
         """
         font = pygame.font.Font(None, 24)
         name_text = font.render(self.name, True, Settings.WHITE)
-        screen.blit(name_text, (self.vector.x, self.vector.y - 30))
+        self.screen.blit(name_text, (self.vector.x, self.vector.y - 30))
 
         if self.can_display_health_bar:
             bar_width = 50
@@ -161,33 +171,124 @@ class Entity:
             health_percentage = self.health / self.max_health
             health_bar_width = bar_width * health_percentage
             # 血量条背景
-            pygame.draw.rect(screen, (255, 0, 0), (self.vector.x, self.vector.y - 10, bar_width, bar_height))
+            pygame.draw.rect(self.screen, (255, 0, 0), (self.vector.x, self.vector.y - 10, bar_width, bar_height))
             # 血量条前景
-            pygame.draw.rect(screen, (0, 255, 0), (self.vector.x, self.vector.y - 10, health_bar_width, bar_height))
+            pygame.draw.rect(self.screen, (0, 255, 0), (self.vector.x, self.vector.y - 10, health_bar_width, bar_height))
 
-    def draw(self, screen):
+    def draw(self):
         """
         绘制实体, 包括头部信息和实体本身
-
-        :param screen: 游戏窗口, 用于绘制实体
         """
-        self.draw_header_info(screen)
+        self.draw_header_info()
 
         current_time = pygame.time.get_ticks()
         if self.attack_flashing and current_time - self.attack_flash_time < 3000:
             if ((current_time // 100) % 2 == 0):
-                self._draw(screen)
-                self.draw_weapon(screen)
+                self._draw()
         else:
-            self._draw(screen)
-            self.draw_weapon(screen)
+            self._draw()
             self.attack_flashing = False
 
-    def _draw(self, screen):
+    def _draw(self):
         """
         绘制实体本身 (矩形)
-
-        :param screen: 游戏窗口, 用于绘制实体
         """
         if self.color:
-            pygame.draw.rect(screen, self.color, (*self.vector.get_pos(), self.size, self.size))
+            pygame.draw.rect(self.screen, self.color, (*self.vector.get_pos(), self.size, self.size))
+
+    def take_damage(self, damage):
+        """
+        让实体接受伤害
+
+        :param damage: 承受的伤害点
+        """
+        if self.is_alive():
+            self.health -= damage
+            self.attack_flash_time = pygame.time.get_ticks()
+            self.attack_flashing = True
+
+    def log_status(self, filename):
+        """
+        记录实体状态到日志文件
+
+        :param filename: 文件名
+        """
+        with open(filename, 'a') as file:
+            file.write(f"Entity Status: {self}\n")
+
+    def get_attributes(self):
+        """
+        获取实体的所有属性值
+        """
+        return {
+            'size': self.size,
+            'speed': self.speed,
+            'max_speed': self.max_speed,
+            'health': self.health
+        }
+
+    def check_collision(self, other_entity):
+        """
+        检测实体是否与其他实体碰撞
+
+        :param other_entity: 其他实体
+        :return: bool
+        """
+        if isinstance(other_entity, Entity):
+            return (self.x < other_entity.x + other_entity.size and
+                    self.x + self.size > other_entity.x and
+                    self.y < other_entity.y + other_entity.size and
+                    self.y + self.size > other_entity.y)
+        return False
+
+    def save_state(self, filename):
+        """
+        保存实体状态到文件
+
+        :param filename: 文件名
+        """
+        with open(filename, 'w') as file:
+            state = {
+                'name': self.name,
+                'size': self.size,
+                'speed': self.speed,
+                'max_speed': self.max_speed,
+                'health': self.health,
+                'max_health': self.max_health,
+                'damage': self.damage,
+                'color': self.color,
+                'x': self.vector.x,
+                'y': self.vector.y,
+                'inventory': self.inventory.get_item_details()
+            }
+            json.dump(state, file)
+
+    def load_state(self, filename):
+        """
+        从文件中加载实体状态
+
+        :param filename: 文件名
+        """
+        with open(filename, 'r') as file:
+            state = json.load(file)
+            self.name = state.get('name', Entity.NAME)
+            self.size = state.get('size', Entity.SIZE)
+            self.speed = state.get('speed', Entity.SPEED)
+            self.max_speed = state.get('max_speed', Entity.MAX_SPEED)
+            self.health = state.get('health', Entity.HEALTH)
+            self.max_health = state.get('max_health', Entity.HEALTH)
+            self.damage = state.get('damage', Entity.DAMAGE)
+            self.color = state.get('color', Entity.COLOR)
+            self.vector = Vector(state.get('x', 0), state.get('y', 0))
+
+            self.inventory, inventory = Inventory(), state.get('inventory', [])
+            for item_id in inventory:
+                self.inventory.add_item_from_id(inventory[item_id])
+
+    def __str__(self):
+        """
+        打印当前实体状态
+        """
+        return (f'{self.__class__.__name__}(name={self.name}, size={self.size}, speed={self.speed}, '
+                f'max_speed={self.max_speed}, health={self.health}/{self.max_health}, '
+                f'damage={self.damage}, {self.vector})')

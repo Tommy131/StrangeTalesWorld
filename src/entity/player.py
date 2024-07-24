@@ -23,22 +23,20 @@ from entity.entity import Entity
 from utils.settings import Settings
 
 class Player(Entity):
-    def __init__(self, name='Player'):
+    def __init__(self, screen, name='Player'):
         """
         初始化玩家对象, 继承自 Entity 类
 
         :param name: 玩家名称, 默认为 'Player'
         """
-        super().__init__(name, damage=1)
+        super().__init__(screen, name=name, damage=1, color=(0, 0, 255))
+        self.can_display_health_bar = True
 
-    def draw(self, surface):
+    def draw(self):
         """
         绘制玩家对象, 包括头部信息和生命值条
-
-        :param surface: 渲染目标表面, 用于绘制玩家
         """
-        super().draw(surface)
-        self.draw_health_bar(surface)
+        super().draw()
 
     def move(self, keys):
         """
