@@ -20,7 +20,6 @@ GitHub       : https://github.com/Tommy131
 import json
 import pygame
 
-import game
 from inventory.inventory import Inventory
 from utils.settings import Settings
 from vector import Vector
@@ -71,7 +70,13 @@ class Entity:
         """
         重置实体属性到默认值
         """
-        self.__init__(name=self.name, size=self.size, speed=self.speed, max_speed=self.max_speed, health=self.health, max_health=self.max_health, damage=self.damage, color=self.color)
+        self.size = self.SIZE
+        self.speed = self.SPEED
+        self.max_speed = self.MAX_SPEED
+        self.health = self.HEALTH
+        self.max_health = self.HEALTH
+        self.damage = self.DAMAGE
+        self.vector = Vector()
 
     def set_size(self, size):
         """

@@ -28,7 +28,7 @@ from event.event import Event
 from event.debug_event_handler import DebugEventHandler
 
 from inventory.item.item import Item
-from inventory.item.weapon import Weapon
+from inventory.item.gun import Gun
 
 from ui.item_bar import ItemBar
 from ui.weapon_roulette import WeaponRoulette
@@ -67,9 +67,9 @@ event.register(item_bar)
 
 # ! 创建虚拟武器数据 TODO: 测试数据, 记得删除
 weapons = [
-    Weapon("Pistol", color=Settings.RED, ammo=10, clip_size=15),
-    Weapon("Rifle", color=Settings.GREY, ammo=30, clip_size=30),
-    Weapon("Shotgun", color=Settings.WHITE, ammo=8, clip_size=8),
+    Gun(random.randint(1000, 9999), 'Pistol', color=Settings.RED, ammo=10, clip_size=15),
+    Gun(random.randint(1000, 9999), 'Rifle', color=Settings.GREY, ammo=30, clip_size=30),
+    Gun(random.randint(1000, 9999), 'Shotgun', color=Settings.WHITE, ammo=8, clip_size=8),
 ]
 # ! ------------
 
