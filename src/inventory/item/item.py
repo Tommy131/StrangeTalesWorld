@@ -10,17 +10,32 @@ Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
 Date         : 2024-07-23 15:12:40
 Author       : HanskiJay
 LastEditors  : HanskiJay
-LastEditTime : 2024-07-23 19:05:39
+LastEditTime : 2024-07-25 01:54:32
 E-Mail       : support@owoblog.com
 Telegram     : https://t.me/HanskiJay
 GitHub       : https://github.com/Tommy131
 '''
 # item.py
 
+import pygame
+
+import game
+
+from utils.settings import Settings
+from vector import Vector
+from utils.utils import load_image, scale_image
+
 class Item:
     DURABILITY = 1
 
-    def __init__(self, item_id, name, description='no description', main_image=None, quantity=1, durability=DURABILITY):
+    ITEM = 'item'
+    WEAPON = 'weapon'
+    GUN = 'weapon/gun'
+    SWORD = 'weapon/sword'
+
+    ITEM_TYPES = [ITEM, WEAPON, GUN, SWORD]
+
+    def __init__(self, item_id, name, description='no description', i_type=ITEM, size=50, main_image=None, quantity=1, durability=DURABILITY, color=Settings.WHITE):
         """
         初始化物品
 
@@ -29,14 +44,31 @@ class Item:
         :param description: 物品描述
         :param quantity: 物品数量, defaults to 1
         :param durability: 耐久性, defaults to DURABILITY
+        :param color: 物品颜色, defaults to Settings.WHITE
         """
         self.id = item_id
         self.name = name
         self.description = description
-        self.main_image = main_image
+        self.i_type = i_type
+        self.size = size
+        self.main_image = scale_image(load_image(f'{Settings.ASSETS_PATH}/images/{i_type}/{main_image}'), size, size) if main_image != None else None
         self.quantity = quantity
         self.durability = durability
+        self.vector = Vector()
+        self.color = color
+
         self.equipped = False
+        self.is_on_ground = False
+
+    def __repr__(self):
+        """
+        返回物品描述
+
+        :return: str
+        """
+        return (f'Item(id={self.id}, name={self.name}, description={self.description}',
+                f'quantity={self.quantity}), durability={self.durability}, color={self.color}',
+                f'is_equipped={self.equipped.__str__}, is_on_ground={self.is_on_ground.__str__}')
 
     def __len__(self):
         """
@@ -53,6 +85,14 @@ class Item:
         :return: bool
         """
         return self.equipped == True
+
+    def is_on_ground(self):
+        """
+        判断物品是否在地上
+
+        :return: bool
+        """
+        return self.is_on_ground == False
 
     def update(self, quantity=0, durability=0):
         """
@@ -75,9 +115,6 @@ class Item:
         else:
             self.quantity -= quantity
 
-    def __repr__(self):
-        return f'Item(id={self.id}, name={self.name}, description={self.description}, quantity={self.quantity})'
-
     def use(self, quantity=1):
         """
         使用物品
@@ -89,3 +126,9 @@ class Item:
 
         self.remove_quantity(quantity)
         return True
+
+    def draw(self, pos=None):
+        if self.main_image == None:
+            pygame.draw.rect(game.graphic.screen, self.color, (*self.vector.get_pos(), self.size, self.size))
+        else:
+            game.graphic.screen.blit(self.main_image, pos if pos != None else self.vector.get_pos())
