@@ -20,8 +20,8 @@ GitHub       : https://github.com/Tommy131
 class EventHandler:
     def on_call(self, event):
         """
-        处理事件时执行的方法
+        事件调用方法
 
-        :param event: pygame 的事件
+        :param event: pygame 事件
         """
         pass

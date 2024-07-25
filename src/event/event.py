@@ -25,6 +25,11 @@ from utils.settings import Settings
 
 class Event:
     def __init__(self, screen):
+        """
+        初始化对象
+
+        :param screen: 游戏屏幕
+        """
         self.screen = screen
         # 初始化事件处理函数字典
         self.event_handlers = []

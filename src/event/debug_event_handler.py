@@ -26,5 +26,10 @@ from utils.settings import Settings
 
 class DebugEventHandler(EventHandler):
     def on_call(self, event):
+        """
+        事件调用方法
+
+        :param event: pygame 事件
+        """
         if event.type == pygame.KEYDOWN and Settings.debug_mode and event.key == pygame.K_F2:
             game.reset_game('游戏状态已重置', font=Settings.FONT_CN)
