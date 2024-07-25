@@ -10,7 +10,7 @@ Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
 Date         : 2024-07-21 02:08:40
 Author       : HanskiJay
 LastEditors  : HanskiJay
-LastEditTime : 2024-07-24 01:33:38
+LastEditTime : 2024-07-25 01:01:34
 E-Mail       : support@owoblog.com
 Telegram     : https://t.me/HanskiJay
 GitHub       : https://github.com/Tommy131
@@ -24,7 +24,6 @@ from utils.settings import Settings
 from utils.utils import find_longest_element
 
 class Graphic:
-
     def __init__(self):
         """
         初始化游戏窗口和背景图像
@@ -38,9 +37,9 @@ class Graphic:
         self.background_image = pygame.transform.scale(self.background_image, (Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT))
 
         # !TODO: 测试用数据, 记得删除
-        popup_screen = pygame.Surface((Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT), pygame.SRCALPHA)
-        popup_screen.fill((0, 0, 0))
-        self.background_image = pygame.transform.scale(popup_screen, (Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT))
+        # popup_screen = pygame.Surface((Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT), pygame.SRCALPHA)
+        # popup_screen.fill((0, 0, 0))
+        # self.background_image = pygame.transform.scale(popup_screen, (Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT))
 
     def save_game(self, entity):
         """
@@ -189,3 +188,27 @@ class Graphic:
 
         # 在屏幕上绘制调试窗口
         self.screen.blit(debug_screen, (margin, margin))
+
+    def draw_health_bar(self, y_position=0, front_color=(0, 255, 0), background_color=(255, 0, 0), sign='+', sign_color=(255, 255, 0)):
+        """
+        绘制指定y位置的血量条
+        """
+        bar_width = 200
+        bar_height = 20
+        margin = 20
+        y_position = Settings.SCREEN_HEIGHT - bar_height - margin - y_position
+
+        # 定义血量条
+        health_percentage = game.player.health / game.player.max_health
+        health_bar_width = bar_width * health_percentage
+
+        # 血量条背景
+        pygame.draw.rect(self.screen, background_color, (margin + 25, y_position, bar_width, bar_height))
+
+        # 血量条前景
+        pygame.draw.rect(self.screen, front_color, (margin + 25, y_position, health_bar_width, bar_height))
+
+        # 绘制黄色的 +号
+        plus_sign_font = pygame.font.Font(None, 48)
+        plus_sign_text = plus_sign_font.render(sign, True, sign_color)
+        self.screen.blit(plus_sign_text, (margin, y_position - 10))

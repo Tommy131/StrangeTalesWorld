@@ -10,16 +10,26 @@ Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
 Date         : 2024-07-20 14:30:27
 Author       : HanskiJay
 LastEditors  : HanskiJay
-LastEditTime : 2024-07-24 00:18:06
+LastEditTime : 2024-07-25 01:41:16
 E-Mail       : support@owoblog.com
 Telegram     : https://t.me/HanskiJay
 GitHub       : https://github.com/Tommy131
 '''
 # main.py
+"""
+TODO:
+! -[] 编写玩家 拾起/丢弃 物品 的逻辑
+! -[] 编写玩家 使用武器 的逻辑
+! -[] 编写 武器与特定子弹 的逻辑
+! -[] 编写 武器效果触发 的逻辑
+! -[] 编写 实体被武器效果击中 的逻辑
+! -[] 编写 武器渲染到页面 的逻辑
+"""
 
 import pygame
 
 import game
+
 from utils.settings import Settings
 
 def is_playing():
@@ -69,9 +79,12 @@ def main():
 
             keys = pygame.key.get_pressed()
             game.player.move(keys)
+
+            # 绘制 GUI
             game.player.draw()
             game.item_bar.draw()
             game.weapon_roulette.draw()
+            game.graphic.draw_health_bar()
 
             # ~[END] -------------------
 

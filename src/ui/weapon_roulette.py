@@ -10,7 +10,7 @@ Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
 Date         : 2024-07-19 21:30:04
 Author       : HanskiJay
 LastEditors  : HanskiJay
-LastEditTime : 2024-07-24 03:00:01
+LastEditTime : 2024-07-25 01:05:09
 E-Mail       : support@owoblog.com
 Telegram     : https://t.me/HanskiJay
 GitHub       : https://github.com/Tommy131
@@ -29,11 +29,16 @@ from utils.settings import Settings
 
 class WeaponRoulette(EventHandler):
     def __init__(self, weapons):
+        """
+        初始化对象
+
+        :param weapons: 武器列表
+        """
         self.weapons = weapons
         self.current_weapon = weapons[0] if weapons else None
         self.animations = []
         self.weapon_display_size = 100
-        self.small_weapon_size = 50
+        self.small_weapon_size = 60
         self.margin = 20
         self.arc_radius = 100
         self.font = pygame.font.Font(None, 36)
@@ -56,19 +61,35 @@ class WeaponRoulette(EventHandler):
 
                 if weapon.main_image:
                     weapon_image = pygame.transform.scale(weapon.main_image, (self.small_weapon_size, self.small_weapon_size))
-                    if weapon == self.current_weapon:
-                        weapon_image.set_alpha(128)  # 设置透明度以弱化显示
+                    if weapon != self.current_weapon:
+                        weapon_image.set_alpha(90)  # 设置透明度以弱化显示
+                    else:
+                        self.draw_shadow((weapon_x, weapon_y), alpha=50)
                     game.graphic.screen.blit(weapon_image, (weapon_x, weapon_y))
                 else:
-                    color = weapon.color
                     if weapon == self.current_weapon:
-                        color = (*color[:3], 128)  # 设置透明度以弱化显示
-                    pygame.draw.rect(game.graphic.screen, color, (weapon_x, weapon_y, self.small_weapon_size, self.small_weapon_size))
-
-                self.draw_circle_shadow(weapon.color, self.small_weapon_size, fixed_vector=(weapon_x, weapon_y))
+                        self.draw_shadow((weapon_x, weapon_y), alpha=90)
+                    self.draw_circle_shadow(weapon.color, self.small_weapon_size, vector=(weapon_x, weapon_y))
 
         if self.current_weapon:
-            self.draw_circle_shadow(self.current_weapon.color, self.weapon_display_size)
+            if self.current_weapon.main_image:
+                size = self.weapon_display_size
+                # 固定显示坐标
+                fixed_vector = (Settings.SCREEN_WIDTH - size - 20, Settings.SCREEN_HEIGHT - size - 130)
+                # 创建带透明背景的圆形遮罩
+                mask_surface = pygame.Surface((size, size), pygame.SRCALPHA)
+                pygame.draw.circle(mask_surface, (*self.current_weapon.color[:3], 90), (size // 2, size // 2), size // 2)
+                # 绘制当前武器
+                current_weapon_image = pygame.transform.scale(self.current_weapon.main_image, (size, size))
+                # 先绘制圆形遮罩
+                game.graphic.screen.blit(mask_surface, fixed_vector)
+                # 再绘制武器图片
+                game.graphic.screen.blit(current_weapon_image, fixed_vector)
+
+            else:
+                self.draw_circle_shadow(self.current_weapon.color, self.weapon_display_size)
+
+            # 绘制武器信息
             weapon_name = self.current_weapon.name if self.current_weapon is not None else 'None'
             ammo = self.current_weapon.ammo if isinstance(self.current_weapon, Weapon) else 'N'
             clip_size = self.current_weapon.clip_size if isinstance(self.current_weapon, Weapon) else 'A'
@@ -80,19 +101,31 @@ class WeaponRoulette(EventHandler):
                 weapon_text = self.font.render(line[0], True, line[1])
                 game.graphic.screen.blit(weapon_text, (Settings.SCREEN_WIDTH - weapon_text.get_width() - self.margin, Settings.SCREEN_HEIGHT - weapon_text.get_height() * (len(weapon_info) - i) - self.margin))
 
-    def draw_circle_shadow(self, color, size, fixed_vector=None):
+    def draw_shadow(self, pos, alpha=128):
+        """
+        绘制方形阴影
+
+        :param pos: 坐标
+        :param alpha: 透明值, defaults to 128
+        """
+        s = pygame.Surface((self.small_weapon_size, self.small_weapon_size))
+        s.set_alpha(alpha)
+        s.fill(Settings.BLACK)
+        game.graphic.screen.blit(s, pos)
+
+    def draw_circle_shadow(self, color, size, vector=None):
         """
         添加阴影
 
         :param color: 背景颜色
         :param size: 显示大小
-        :param fixed_vector: 固定坐标, defaults to None
+        :param vector: 固定坐标, defaults to None
         """
-        if fixed_vector:
-            shadow_color = (0, 0, 0, 50) if len(color) == 3 else color
-            pygame.draw.circle(game.graphic.screen, shadow_color, (int(fixed_vector[0] + size // 2), int(fixed_vector[1] + size // 2)), size // 2)
+        if vector:
+            vector = (int(vector[0] + size // 2), int(vector[1] + size // 2))
         else:
-            pygame.draw.circle(game.graphic.screen, color, (Settings.SCREEN_WIDTH - size // 2 - self.margin - 10, Settings.SCREEN_HEIGHT - size // 2 - self.margin - 110), size // 2)
+            vector = (Settings.SCREEN_WIDTH - size // 2 - self.margin - 10, Settings.SCREEN_HEIGHT - size // 2 - self.margin - 110)
+        pygame.draw.circle(game.graphic.screen, color, vector, size // 2 - 5)
 
     def on_call(self, event):
         """
@@ -100,10 +133,11 @@ class WeaponRoulette(EventHandler):
 
         :param event: pygame 事件
         """
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_TAB:
-                # 切换到下一个武器
-                current_index = self.weapons.index(self.current_weapon)
-                new_index = (current_index + 1) % len(self.weapons)
-                self.current_weapon = self.weapons[new_index]
-                self.animations.append([time.time(), new_index])
+        if Settings.state == Settings.PLAYING:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_TAB:
+                    # 切换到下一个武器
+                    current_index = self.weapons.index(self.current_weapon)
+                    new_index = (current_index + 1) % len(self.weapons)
+                    self.current_weapon = self.weapons[new_index]
+                    self.animations.append([time.time(), new_index])
