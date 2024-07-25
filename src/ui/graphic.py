@@ -125,7 +125,7 @@ class Graphic:
 
     def draw_settings_screen(self):
         """
-        绘制游戏设置页面
+        绘制游戏设置屏幕
         """
         width = Settings.SCREEN_WIDTH // 2
         self.draw_text(text=[
@@ -141,7 +141,7 @@ class Graphic:
 
     def draw_pause_screen(self):
         """
-        绘制游戏暂停页面
+        绘制游戏暂停屏幕
         """
         width = Settings.SCREEN_WIDTH // 2
         self.draw_text(text=[

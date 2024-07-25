@@ -73,5 +73,5 @@ class Settings:
     # 调试模式
     debug_mode = False
 
-    # 当前页面状态
+    # 当前屏幕状态
     state = MENU
