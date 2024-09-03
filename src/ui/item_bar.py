@@ -66,7 +66,8 @@ class ItemBar(EventHandler):
             if item.main_image:
                 game.graphic.screen.blit(item.main_image, (item_x, item_y))  # 绘制物品图片
             else:
-                pygame.draw.rect(game.graphic.screen, Settings.WHITE, (item_x, item_y, Settings.ITEM_SIZE, Settings.ITEM_SIZE))  # 如果没有图片，用颜色填充
+                pygame.draw.rect(game.graphic.screen, item.color, (item_x, item_y, Settings.ITEM_SIZE, Settings.ITEM_SIZE))  # 如果没有图片，用颜色填充
+                # pygame.draw.rect(game.graphic.screen, Settings.WHITE, (item_x, item_y, Settings.ITEM_SIZE, Settings.ITEM_SIZE))  # 如果没有图片，用颜色填充
 
             # 显示物品数量
             quantity_text = font.render(str(item.quantity), True, Settings.BLACK)

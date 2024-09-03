@@ -22,7 +22,7 @@ from utils.settings import Settings
 from vector import Vector
 
 class BulletEffect(Effect):
-    def __init__(self, vel, size, color=Settings.YELLOW):
+    def __init__(self, vector, vel, size, color=Settings.YELLOW):
         """
         初始化对象
 
@@ -30,7 +30,7 @@ class BulletEffect(Effect):
         :param size: 大小
         :param color: 颜色, defaults to Settings.YELLOW
         """
-        super().__init__(size, color=color)
+        super().__init__(size, vector=vector, color=color)
         self.vel = vel
 
     def update(self):

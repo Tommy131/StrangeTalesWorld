@@ -10,7 +10,7 @@ Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
 Date         : 2024-07-21 02:08:40
 Author       : HanskiJay
 LastEditors  : HanskiJay
-LastEditTime : 2024-07-23 23:58:42
+LastEditTime : 2024-09-03 20:18:16
 E-Mail       : support@owoblog.com
 Telegram     : https://t.me/HanskiJay
 GitHub       : https://github.com/Tommy131
@@ -33,7 +33,7 @@ class Entity:
     DAMAGE = 0
     COLOR = (0, 255, 0)
 
-    def __init__(self, screen, name=NAME, size=SIZE, speed=SPEED, max_speed=MAX_SPEED, health=HEALTH, max_health=HEALTH, damage=DAMAGE, color=COLOR):
+    def __init__(self, screen, name=NAME, size=SIZE, speed=SPEED, max_speed=MAX_SPEED, health=HEALTH, max_health=HEALTH, damage=DAMAGE, color=COLOR, last_direction=None):
         """
         初始化实体对象
 
@@ -56,6 +56,7 @@ class Entity:
         self.max_health = max_health
         self.damage = damage
         self.color = color
+        self.last_direction = last_direction
         self.vector = Vector()
         self.inventory = Inventory()
 
@@ -125,6 +126,14 @@ class Entity:
         :return: 实体的向量对象
         """
         return self.vector
+
+    def get_pos(self):
+        """
+        获取实体的向量对象元组
+
+        :return: 实体的向量元组
+        """
+        return self.vector.get_pos()
 
     def is_alive(self):
         """
@@ -240,10 +249,10 @@ class Entity:
         :return: bool
         """
         if isinstance(other_entity, Entity):
-            return (self.x < other_entity.x + other_entity.size and
-                    self.x + self.size > other_entity.x and
-                    self.y < other_entity.y + other_entity.size and
-                    self.y + self.size > other_entity.y)
+            return (self.vector.x < other_entity.vector.x + other_entity.size and
+                    self.vector.x + self.size > other_entity.vector.x and
+                    self.vector.y < other_entity.vector.y + other_entity.size and
+                    self.vector.y + self.size > other_entity.vector.y)
         return False
 
     def save_state(self, filename):

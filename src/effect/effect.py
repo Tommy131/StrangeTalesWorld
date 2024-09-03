@@ -25,7 +25,7 @@ from utils.settings import Settings
 from vector import Vector
 
 class Effect:
-    def __init__(self, size, color=Settings.BLUE):
+    def __init__(self, size, vector=Vector(), color=Settings.BLUE):
         """
         初始化对象
 
@@ -33,7 +33,7 @@ class Effect:
         :param size: 大小
         :param color: 颜色, defaults to Settings.BLUE
         """
-        self.vector = Vector()
+        self.vector = vector
         self.size = size
         self.color = color
 
@@ -47,7 +47,7 @@ class Effect:
         """
         绘制效果
         """
-        pygame.draw.circle(game.graphic.screen, self.color, self.vector, self.size)
+        pygame.draw.circle(game.graphic.screen, self.color, self.vector.get_pos(), self.size)
 
     def collide(self, entity):
         """
@@ -56,8 +56,8 @@ class Effect:
         :param entity: 实体
         :return: bool
         """
-        return (self.vector.x > entity.pos[0] and self.vector.x < entity.pos[0] + entity.size and
-                self.vector.y > entity.pos[1] and self.vector.y < entity.pos[1] + entity.size)
+        return (self.vector.x > entity.vector.x and self.vector.x < entity.vector.x + entity.size and
+                self.vector.y > entity.vector.y and self.vector.y < entity.vector.y + entity.size)
 
     def is_off_screen(self):
         """

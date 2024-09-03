@@ -10,7 +10,7 @@ Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
 Date         : 2024-07-19 21:30:04
 Author       : HanskiJay
 LastEditors  : HanskiJay
-LastEditTime : 2024-07-25 01:05:09
+LastEditTime : 2024-09-03 17:13:08
 E-Mail       : support@owoblog.com
 Telegram     : https://t.me/HanskiJay
 GitHub       : https://github.com/Tommy131
@@ -28,7 +28,7 @@ from inventory.item.weapon import Weapon
 from utils.settings import Settings
 
 class WeaponRoulette(EventHandler):
-    def __init__(self, weapons):
+    def __init__(self, weapons=None):
         """
         初始化对象
 
@@ -48,6 +48,18 @@ class WeaponRoulette(EventHandler):
         """
         绘制武器轮盘
         """
+        # 更新武器排序
+        weapons = []
+        # for item in game.player.inventory.get_item_details():
+        for item in game.player_equipped_items:
+            if len(weapons) == 3:
+                break
+            if isinstance(item, Weapon):
+                weapons.append(item)
+        self.weapons = weapons
+        if self.current_weapon == None:
+            self.current_weapon = weapons[0] if weapons else None
+
         # 绘制选中武器的中心坐标
         center_x = Settings.SCREEN_WIDTH - self.weapon_display_size // 2 - self.margin - 10
         center_y = Settings.SCREEN_HEIGHT - self.weapon_display_size // 2 - self.margin - 90

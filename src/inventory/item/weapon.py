@@ -10,7 +10,7 @@ Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
 Date         : 2024-07-24 02:52:09
 Author       : HanskiJay
 LastEditors  : HanskiJay
-LastEditTime : 2024-07-25 02:15:25
+LastEditTime : 2024-09-03 18:37:50
 E-Mail       : support@owoblog.com
 Telegram     : https://t.me/HanskiJay
 GitHub       : https://github.com/Tommy131
@@ -60,15 +60,15 @@ class Weapon(Item):
         :param entity: _description_
         :return: bool
         """
-        for effect in self.effect[:]:
+        for effect in self.effects[:]:
             effect.update()
-            if effect.collide(entity.get_pos(), entity.size):
-                self.effect.remove(effect)
+            if entity and effect.collide(entity):
+                self.effects.remove(effect)
                 entity.take_damage(self.damage)
                 if entity.is_alive() == False:
                     return True
             elif effect.is_off_screen():
-                self.effect.remove(effect)
+                self.effects.remove(effect)
         return False
 
     def attack(self):

@@ -19,6 +19,8 @@ GitHub       : https://github.com/Tommy131
 
 import pygame
 
+from vector import Vector
+
 from inventory.item.weapon import Weapon
 from utils.settings import Settings
 
@@ -91,4 +93,4 @@ class Gun(Weapon):
             bullet_pos = [entity.vector.x + entity.size // 2, entity.vector.y + entity.size]
             bullet_vel = [0, self.bullet_speed]
 
-        return BulletEffect(bullet_pos, bullet_vel, bullet_size)
+        return BulletEffect(Vector(x=bullet_pos[0], y=bullet_pos[1]), Vector(x=bullet_vel[0], y=bullet_vel[1]), bullet_size)
