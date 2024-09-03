@@ -10,7 +10,7 @@ Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
 Date         : 2024-07-20 17:43:30
 Author       : HanskiJay
 LastEditors  : HanskiJay
-LastEditTime : 2024-07-23 01:51:53
+LastEditTime : 2024-09-03 17:59:51
 E-Mail       : support@owoblog.com
 Telegram     : https://t.me/HanskiJay
 GitHub       : https://github.com/Tommy131
@@ -18,6 +18,8 @@ GitHub       : https://github.com/Tommy131
 # player.py
 
 import pygame
+
+import game
 
 from entity.entity import Entity
 from utils.settings import Settings
@@ -67,3 +69,26 @@ class Player(Entity):
             self.speed = self.SPEED
 
         super().move()
+
+    def press(self, keys, entity):
+        """
+        实现玩家按下按键事件监听
+
+        :param keys: 当前按键状态的字典 (pygame.key.get_pressed() 的返回值)
+        """
+        current_weapon = game.weapon_roulette.current_weapon
+
+        # 使用武器
+        if keys[pygame.K_SPACE] and game.player.last_direction:
+            current_weapon.effects.append(current_weapon.attack(game.player, game.player.last_direction))
+
+        # 重新加载武器 (按R键重新加载)
+        if keys[pygame.K_r] and current_weapon:
+            current_weapon.reload()
+
+        # 绘制武器效果
+        if game.weapon_roulette.weapons:
+            for weapon in game.weapon_roulette.weapons:
+                weapon.effect(entity)
+                for effect in weapon.effects:
+                    effect.draw()

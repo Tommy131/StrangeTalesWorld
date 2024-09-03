@@ -10,7 +10,7 @@ Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
 Date         : 2024-07-20 14:30:27
 Author       : HanskiJay
 LastEditors  : HanskiJay
-LastEditTime : 2024-07-25 01:41:16
+LastEditTime : 2024-09-03 20:38:50
 E-Mail       : support@owoblog.com
 Telegram     : https://t.me/HanskiJay
 GitHub       : https://github.com/Tommy131
@@ -19,11 +19,12 @@ GitHub       : https://github.com/Tommy131
 """
 TODO:
 ! -[] 编写玩家 拾起/丢弃 物品 的逻辑
-! -[] 编写玩家 使用武器 的逻辑
-! -[] 编写 武器与特定子弹 的逻辑
-! -[] 编写 武器效果触发 的逻辑
-! -[] 编写 实体被武器效果击中 的逻辑
-! -[] 编写 武器渲染到屏幕 的逻辑
+! -[x] 编写任务栏 排序武器+武器轮盘更新 的逻辑
+! -[x] 编写玩家 使用武器 的逻辑
+! -[-] 编写 武器与特定子弹 的逻辑
+! -[x] 编写 武器效果触发 的逻辑
+! -[x] 编写 实体被武器效果击中 的逻辑
+! -[x] 编写 武器渲染到屏幕 的逻辑
 """
 
 import pygame
@@ -79,6 +80,9 @@ def main():
 
             keys = pygame.key.get_pressed()
             game.player.move(keys)
+            game.player.press(keys, game.enemy)
+
+            game.enemy.update()
 
             # 绘制 GUI
             game.player.draw()

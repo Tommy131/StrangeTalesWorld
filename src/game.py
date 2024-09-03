@@ -10,7 +10,7 @@ Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
 Date         : 2024-07-23 23:19:01
 Author       : HanskiJay
 LastEditors  : HanskiJay
-LastEditTime : 2024-07-24 02:25:18
+LastEditTime : 2024-09-03 20:04:50
 E-Mail       : support@owoblog.com
 Telegram     : https://t.me/HanskiJay
 GitHub       : https://github.com/Tommy131
@@ -23,12 +23,14 @@ import pygame
 import sys
 
 from entity.player import Player
+from entity.enemy import Enemy
 
 from event.event import Event
 from event.debug_event_handler import DebugEventHandler
 
 from inventory.item.item import Item
 from inventory.item.gun import Gun
+from inventory.item.attributes import *
 
 from ui.item_bar import ItemBar
 from ui.weapon_roulette import WeaponRoulette
@@ -49,32 +51,29 @@ player.vector.set_x(Settings.SCREEN_WIDTH // 2).set_y(Settings.SCREEN_HEIGHT // 
 player_equipped_items = player.inventory.get_item_details() if not player.inventory.is_empty() else [None] * Settings.DISPLAY_ITEM_NUM
 
 # ! TODO: 测试数据, 记得删除
-items = []
-for i in range(7):
-    # 随机生成数量
-    quantity = random.randint(1, 10)
-
-    # 随机生成耐久度，可能为 False 或 0 到 1 之间的随机值
-    durability = random.choice([False] + [random.uniform(0.1, 1.0) for _ in range(3)])
-
-    # 添加物品到列表
-    items.append(Item(random.randint(10000, 99999), f'Item#{i}', main_image=None, quantity=quantity, durability=durability))
+items = [
+    Item(random.randint(10000, 99999), 'Seeds', main_image=None, quantity=21, durability=0.7),
+    AK47(),
+    Negev(),
+    Item(random.randint(10000, 99999), 'TestItem', main_image=None, quantity=1, durability=1),
+    Glock18(),
+    Item(random.randint(10000, 99999), 'Apple', main_image=None, quantity=5, durability=0.9),
+    Item(random.randint(10000, 99999), 'Ammo_5.56', main_image=None, quantity=2, durability=0.2),
+]
 player_equipped_items = items
+
+# 初始化敌对NPC
+enemy = Enemy(graphic.screen)
+enemy.name = enemy.generate_name()
+enemy.vector.x = random.randint(0, Settings.SCREEN_WIDTH - enemy.size)
+enemy.vector.y = random.randint(0, Settings.SCREEN_HEIGHT - enemy.size)
 # ! ------------
 
 item_bar = ItemBar(player_equipped_items)
 event.register(item_bar)
 
-# ! 创建虚拟武器数据 TODO: 测试数据, 记得删除
-weapons = [
-    Gun(random.randint(1000, 9999), 'Pistol', color=Settings.RED, ammo=10, clip_size=15),
-    Gun(random.randint(1000, 9999), 'Rifle', color=Settings.GREY, ammo=30, clip_size=30),
-    Gun(random.randint(1000, 9999), 'Shotgun', color=Settings.WHITE, ammo=8, clip_size=8),
-]
-# ! ------------
-
 # 创建 WeaponRoulette 实例
-weapon_roulette = WeaponRoulette(weapons)
+weapon_roulette = WeaponRoulette()
 event.register(weapon_roulette)
 
 
